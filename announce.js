@@ -45,7 +45,13 @@ module.exports = function(me, options, callback) {
 	process.env = env;
 
 	server.on('listening', function() {
-		if (!multicast) server.setMulticastTTL(0);
+		if (!multicast) 
+		{ server.setMulticastTTL(0);
+		} else {
+			//server.setMulticastTTL(64);
+			server.setMulticastLoopback(true);
+      server.setBroadcast(true);
+		}
 		try {
 			server.addMembership(host);
 		} catch (e) {

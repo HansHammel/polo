@@ -9,4 +9,4 @@ repo.put({
 
 setTimeout(function() {
 	process.exit(0);
-}, 700);
+}, 1500);
