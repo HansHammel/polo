@@ -314,6 +314,7 @@ var proxy = function(options) {
 
 	that.close = function() {
 		shared.close();
+		delete pool[key];
 	};
 
 	return that;
