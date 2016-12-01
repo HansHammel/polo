@@ -75,7 +75,7 @@ var startMonitor = function(callback) {
 	var fork = function() {
 		var child = proc.fork(path.join(__dirname, 'monitor.js'), {
 			detached: true,
-			stdio: ['ignore', 'ignore', 'ignore']
+			stdio: ['ignore', 'ignore', 'ignore', 'ipc']
 		});
 		child.unref();
 		retry();
