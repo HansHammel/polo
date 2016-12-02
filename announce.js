@@ -99,13 +99,13 @@ function bindToAllNics(server,host){
 process.env = {};
 	//server.bind(port);
 	//server.bind(port, '0.0.0.0');
-	server.bind(port, function() {
+	server.bind(port, '0.0.0.0', function() {
 		if (!multicast) 
 		{ server.setMulticastTTL(0);
 		} else {
 			server.setMulticastTTL(128);
 			server.setMulticastLoopback(true);
-      server.setBroadcast(true);
+      server.setBroadcast(false);
 		}
 		try {
 			//server.addMembership(host);
