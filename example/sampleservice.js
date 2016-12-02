@@ -7,6 +7,7 @@ var apps = polo({
     heartbeat: 1000 // set the service heartbeat interval (defaults to 2min)
 });
 var colors = require('colors/safe');
+var os = require('os');
 
 apps.on('up', function(name, service) {                   // up fires everytime some service joins
     //console.log('up',name,service, apps.get(name));                        // should print out the joining service, e.g. hello-world
@@ -44,7 +45,7 @@ var data = {
         	somestuff: { o: 'b' }
         }
     };
-    if (random_boolean) data.hostname='somehost';
+    if (random_boolean) data.hostname=os.hostname();
     apps.put(data);
 
     console.log('visit: http://localhost:'+port);
