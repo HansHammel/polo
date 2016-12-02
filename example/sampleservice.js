@@ -1,7 +1,11 @@
 var http = require('http');
 var uuidV4 = require('uuid/v4');
-var polo = require('./polo');
-var apps = polo();
+var polo = require('../');
+var apps = polo({
+    multicast: true,     // disables network multicast,
+    monitor: true,        // fork a monitor for faster failure detection,
+    heartbeat: 1000 // set the service heartbeat interval (defaults to 2min)
+});
 var colors = require('colors/safe');
 
 apps.on('up', function(name, service) {                   // up fires everytime some service joins
@@ -44,5 +48,5 @@ var data = {
     apps.put(data);
 
     console.log('visit: http://localhost:'+port);
-    console.log(apps.all());
+    //console.log(apps.all());
 });

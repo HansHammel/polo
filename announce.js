@@ -1,6 +1,7 @@
 var dgram = require('dgram');
 
-var MULTICAST_ADDRESS = '224.0.0.234';
+//var MULTICAST_ADDRESS = '224.0.0.234';
+var MULTICAST_ADDRESS = '224.0.0.1';
 var MULTICAST_PORT = 60547;
 
 module.exports = function(me, options, callback) {
@@ -41,15 +42,15 @@ module.exports = function(me, options, callback) {
 	me = Math.random().toString(16).substr(2) + '@' + me;
 
 	process.env = {};
-	server.bind(port);
+	server.bind(port, '0.0.0.0');
 	process.env = env;
 
 	server.on('listening', function() {
 		if (!multicast) 
 		{ server.setMulticastTTL(0);
 		} else {
-			//server.setMulticastTTL(64);
-			server.setMulticastLoopback(true);
+			server.setMulticastTTL(64);
+			//server.setMulticastLoopback(true);
       server.setBroadcast(true);
 		}
 		try {
