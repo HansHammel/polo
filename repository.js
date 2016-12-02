@@ -62,7 +62,7 @@ var ME = function() {
 		}
 	}
 
-	return '127.0.0.1';
+	return '0.0.0.0';
 }();
 
 var startMonitor = function(callback) {
@@ -81,7 +81,7 @@ var startMonitor = function(callback) {
 		retry();
 	};
 	var connect = function(callback) {
-		var socket = net.connect(63567, '127.0.0.1');
+		var socket = net.connect(63567, '0.0.0.0');
 		var onerror = function(err) {
 			callback(err);
 		};

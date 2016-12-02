@@ -1,10 +1,15 @@
 var dgram = require('dgram');
+var os = require('os');
 
-//var MULTICAST_ADDRESS = '239.255.255.250';
-var MULTICAST_ADDRESS = '239.255.178.1';
+//on win check:  netsh interface ip show joins
+//var MULTICAST_ADDRESS = '239.255.255.250'; //not working on windows
+//var MULTICAST_ADDRESS = '239.255.178.1'; //private multicast //not working on windows
+//var MULTICAST_ADDRESS = '224.1.1.1';  //not working on windows
 //var MULTICAST_ADDRESS = '224.0.0.234';
-//var MULTICAST_ADDRESS = '224.0.0.1';
-//var MULTICAST_ADDRESS = '224.0.0.114';
+var MULTICAST_ADDRESS = '224.0.0.1'; //working on windows !!!
+//var MULTICAST_ADDRESS = '224.0.0.114'; //not working on windows
+//var MULTICAST_ADDRESS = '225.0.0.1'; //not working on windows
+
 //var MULTICAST_ADDRESS = '225.0.0.1';
 var MULTICAST_PORT = 60547;
 
@@ -68,6 +73,29 @@ module.exports = function(me, options, callback) {
 		}
 	});
 
+function bindToAllNics(server,host){
+	var ifaces = os.networkInterfaces();
+	Object.keys(ifaces).forEach(function (ifname) {
+	  var alias = 0;
+	  ifaces[ifname].forEach(function (iface) {
+	    if ('IPv4' !== iface.family || iface.internal !== false) {
+	      // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
+	      return;
+	    }
+	    if (alias >= 1) {
+	      // this single interface has multiple ipv4 addresses
+	      //console.log(ifname + ':' + alias, iface.address);
+	      server.addMembership(host, iface.address);
+	    } else {
+	      // this interface has only one ipv4 adress
+	      //console.log(ifname, iface.address);
+	      server.addMembership(host, iface.address);
+	    }
+	    ++alias;
+	  });
+	});
+}
+
 process.env = {};
 	//server.bind(port);
 	//server.bind(port, '0.0.0.0');
@@ -80,7 +108,8 @@ process.env = {};
       server.setBroadcast(true);
 		}
 		try {
-			server.addMembership(host);
+			//server.addMembership(host);
+			bindToAllNics(server,host);
 		} catch (e) {
 			callback(e);
 		}
