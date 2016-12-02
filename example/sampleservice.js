@@ -39,13 +39,14 @@ var data = {
         name: servicename,
         //host set automatically
         //hostname: random_boolean ? 'somehost' : null,
+        hostname: os.hostname(),
         port: port,
         config: {
         	started: new Date().toISOString(),
         	somestuff: { o: 'b' }
         }
     };
-    if (random_boolean) data.hostname=os.hostname();
+    //if (random_boolean) data.hostname=os.hostname();
     apps.put(data);
 
     console.log('visit: http://localhost:'+port);
