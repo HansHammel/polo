@@ -7,7 +7,7 @@
     "colors": "^1.1.2",
     "common": "^0.2.5",
     "request": "^2.79.0",
-    "root": "https+git://github.com/HansHammel/root.git",
+    "root": "git+https://github.com/HansHammel/root.git",
     "uuid": "^3.0.1"
   },
   "repository": "git://github.com/HansHammel/polo",
