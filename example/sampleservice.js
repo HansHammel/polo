@@ -9,46 +9,46 @@ var apps = polo({
 var colors = require('colors/safe');
 var os = require('os');
 
-apps.on('up', function(name, service) {                   // up fires everytime some service joins
+apps.on('up', function (name, service) {                   // up fires everytime some service joins
     //console.log('up',name,service, apps.get(name));                        // should print out the joining service, e.g. hello-world
-    console.log('Service ' + colors.green('UP'),service.name,service.address);
+    console.log('Service ' + colors.green('UP'), service.name, service.address);
 });
 
-apps.on('down', function(name, service) {                   // up fires everytime some service joins
-    console.log('Service ' + colors.red('DOWN'),service.name,service.address);                        // should print out the joining service, e.g. hello-world
+apps.on('down', function (name, service) {                   // up fires everytime some service joins
+    console.log('Service ' + colors.red('DOWN'), service.name, service.address);                        // should print out the joining service, e.g. hello-world
 });
 
 var servicename = uuidV4();
 
-var server = http.createServer(function(req, res) {
+var server = http.createServer(function (req, res) {
     if (req.url !== '/') {
         res.writeHead(404);
         res.end();
         return;
     }
-    res.end('hello-http is available at http://'+apps.get(servicename).address);
+    res.end('hello-http is available at http://' + apps.get(servicename).address);
 });
 
-var random_boolean = Math.random() >= 0.5;
+//var random_boolean = Math.random() >= 0.5;
 
-server.listen(0, function() {
+server.listen(0, function () {
     var port = server.address().port; // let's find out which port we binded to
 
 
-var data = {
+    var data = {
         name: servicename,
         //host set automatically
         //hostname: random_boolean ? 'somehost' : null,
         hostname: os.hostname(),
         port: port,
         config: {
-        	started: new Date().toISOString(),
-        	somestuff: { o: 'b' }
+            started: new Date().toISOString(),
+            somestuff: {o: 'b'}
         }
     };
     //if (random_boolean) data.hostname=os.hostname();
     apps.put(data);
 
-    console.log('visit: http://localhost:'+port);
+    console.log('visit: http://localhost:' + port);
     //console.log(apps.all());
 });

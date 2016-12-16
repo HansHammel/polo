@@ -6,42 +6,42 @@ var repo = polo(require('./fixtures/conf.json'));
 var up = 0;
 var down = 0;
 
-var ports = {1:false,2:false,3:false,4:false,5:false};
+var ports = {1: false, 2: false, 3: false, 4: false, 5: false};
 
-repo.on('up', function(name, service) {
-	if (name !== '5-up-down') return;
+repo.on('up', function (name, service) {
+    if (name !== '5-up-down') return;
 
-	up++;
+    up++;
 
-	assert.ok(!ports[service.port]);
-	assert.ok(service.port < 6, service.port+'');
+    assert.ok(!ports[service.port]);
+    assert.ok(service.port < 6, service.port + '');
 
-	ports[service.port] = true;
+    ports[service.port] = true;
 });
-repo.on('down', function(name, service) {
-	if (name !== '5-up-down') return;
+repo.on('down', function (name, service) {
+    if (name !== '5-up-down') return;
 
-	down++;
+    down++;
 
-	assert.ok(ports[service.port]);
-	assert.ok(service.port < 6);
+    assert.ok(ports[service.port]);
+    assert.ok(service.port < 6);
 
-	if (down === 5) {
-		for (var i in ports) {
-			assert(ports[i]);
-		}
+    if (down === 5) {
+        for (var i in ports) {
+            assert(ports[i]);
+        }
 
-		assert.ok(up === 5);
-		process.exit(0);
-	}
+        assert.ok(up === 5);
+        process.exit(0);
+    }
 });
 
 for (var i = 0; i < 5; i++) {
-	exec('node '+__dirname+'/fixtures/put-and-close.js 5-up-down '+(1+i), function(err, stdout) {
-		assert.ok(!err, err && err.message);
-	});
+    exec('node ' + __dirname + '/fixtures/put-and-close.js 5-up-down ' + (1 + i), function (err, stdout) {
+        assert.ok(!err, err && err.message);
+    });
 }
 
-setTimeout(function() {
-	assert.ok(false, 'timeout');
+setTimeout(function () {
+    assert.ok(false, 'timeout');
 }, 5000);

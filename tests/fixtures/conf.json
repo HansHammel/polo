@@ -1,5 +1,5 @@
 {
-	"port":60558,
-	"multicast": false,
-	"monitor": true
+  "port": 60558,
+  "multicast": false,
+  "monitor": true
 }
