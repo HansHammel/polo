@@ -1,61 +1,85 @@
-var root = require('root');
-var request = require('request');
-var common = require('common');
-var proc = require('child_process');
-var net = require('net');
-var path = require('path');
-var announce = require('./announce');
+const root = require('root');
+const request = require('request');
+const proc = require('child_process');
+const net = require('net');
+const path = require('path');
+const announce = require('./announce');
 
-var Repository = common.emitter(function (uri) {
+const EventEmitter = require('events');
+
+class Repository extends EventEmitter {
+	constructor(uri) {
+		super();
     this.uri = uri;
     this.all = {};
-});
-
-Repository.prototype.keys = function () {
+  }
+  keys() {
     return Object.keys(this.all);
 };
-Repository.prototype.pushAll = function (vals) {
+pushAll(vals) {
     var self = this;
 
     Object.keys(vals).forEach(function (key) {
         self.push(key, vals[key]);
     });
 };
-Repository.prototype.push = function (key, val) {
+push(key, val) {
     var list = this.all[key] = this.get(key);
 
     val = Array.isArray(val) ? val : [val];
     list.push.apply(list, val);
     this.emit('push', key, val);
 };
-Repository.prototype.pop = function (key) {
+pop(key) {
     var list = this.all[key];
 
     if (!list) return;
     delete this.all[key];
     this.emit('pop', key, list);
 };
-Repository.prototype.get = function (key) {
+get(key) {
     return this.all[key] || [];
 };
-Repository.prototype.destroy = function () {
+destroy() {
     this.emit('destroy');
     this.keys().forEach(this.pop.bind(this));
 };
-Repository.prototype.toJSON = function () {
+toJSON() {
     return this.all;
 };
+}
 
-var PROXY = 'address get all push'.split(' ');
-var PING_TIMEOUT = 10 * 1000;
-var HEARTBEAT = 2 * 60 * 1000;
-var ME = /**
+function future() {
+		var that = {};
+		var stack = [];
+		
+		that.get = function(fn) {
+			stack.push(fn);
+		};
+		that.put = function(a,b) {
+			that.get = function(fn) {
+				fn(a,b);
+			};
+			
+			while (stack.length) {
+				stack.shift()(a,b);
+			}
+		};
+		return that;
+	};
+
+
+
+const PROXY = 'address get all push'.split(' ');
+const PING_TIMEOUT = 10 * 1000;
+const HEARTBEAT = 2 * 60 * 1000;
+const ME = /**
  * @return {string}
  */
     function () {
-    var nets = require('os').networkInterfaces();
+    const nets = require('os').networkInterfaces();
 
-    for (var i in nets) {
+    for (let i in nets) {
         var candidate = nets[i].filter(function (item) {
             return item.family === 'IPv4' && !item.internal;
         })[0];
@@ -68,24 +92,24 @@ var ME = /**
     return '127.0.0.1';
 }();
 
-var startMonitor = function (callback) {
-    var retry = function () {
+const startMonitor = function (callback) {
+    const retry = function () {
         connect(function (err, socket) {
             if (err) return setTimeout(retry, 100);
             callback(null, socket);
         });
     };
-    var fork = function () {
-        var child = proc.fork(path.join(__dirname, 'monitor.js'), {
+    const fork = function () {
+        const child = proc.fork(path.join(__dirname, 'monitor.js'), {
             detached: true,
             stdio: ['ignore', 'ignore', 'ignore', 'ipc']
         });
         child.unref();
         retry();
     };
-    var connect = function (callback) {
-        var socket = net.connect(63567, '127.0.0.1');
-        var onerror = function (err) {
+    const connect = function (callback) {
+        const socket = net.connect(63567, '127.0.0.1');
+        const onerror = function (err) {
             callback(err);
         };
 
@@ -102,16 +126,18 @@ var startMonitor = function (callback) {
     });
 };
 
-var pool = {};
-var listen = function (options) {
-    var that = common.createEmitter();
-    var app = root();
-    var announcer;
-    var id = process.pid.toString(16) + Math.random().toString(16).substr(2);
-    var heartbeat;
+let pool = {};
+const listen = function (options) {
+    //var that = common.createEmitter();
+    const that = new Repository();
+    const app = root();
+    let announcer;
+    const id = process.pid.toString(16) + Math.random().toString(16).substr(2);
+    let heartbeat;
 
-    var onmonitor = common.future();
-    var monitor = function (message) {
+    //var onmonitor = common.future();
+    const onmonitor = future();
+    const monitor = function (message) {
         onmonitor.get(function (err, daemon) {
             if (!daemon || !daemon.writable) return;
             daemon.write(JSON.stringify(message) + '\n');
@@ -122,12 +148,12 @@ var listen = function (options) {
         startMonitor(onmonitor.put);
     }
 
-    var cache = {};
-    var own = new Repository(id);
-    var repos = {
+    let cache = {};
+    const own = new Repository(id);
+    let repos = {
         me: own
     };
-    var proxy = function (repo) {
+    const proxy = function (repo) {
         repo.on('push', function (key, values) {
             cache = {};
             values.forEach(function (val) {
@@ -140,8 +166,8 @@ var listen = function (options) {
             });
         });
     };
-    var repository = function (uri) {
-        var repo = repos[uri];
+    const repository = function (uri) {
+        let repo = repos[uri];
 
         if (repo) return repo;
 
@@ -160,7 +186,7 @@ var listen = function (options) {
         proxy(repo);
         return repo;
     };
-    var gc = function () {
+    const gc = function () {
         remote(function (repo) {
             request({
                 uri: repo.uri + '/ping',
@@ -172,13 +198,13 @@ var listen = function (options) {
         clearTimeout(heartbeat);
         heartbeat = setTimeout(gc, options.heartbeat || HEARTBEAT);
     };
-    var onresponse = function (repo) {
+    const onresponse = function (repo) {
         return function (err, res, body) {
             if (!err && res.statusCode === 200 && body.ack) return;
             repo.destroy();
         };
     };
-    var remote = function (fn) {
+    const remote = function (fn) {
         Object.keys(repos).forEach(function (uri) {
             if (uri === 'me') return;
             fn(repos[uri]);
@@ -268,7 +294,7 @@ var listen = function (options) {
         var all = cache._all = {};
 
         Object.keys(repos).forEach(function (uri) {
-            var repo = repos[uri];
+            let repo = repos[uri];
 
             repo.keys().forEach(function (key) {
                 Array.prototype.push.apply(all[key] = all[key] || [], repo.get(key));
@@ -286,13 +312,14 @@ var listen = function (options) {
 
     return that;
 };
-var proxy = function (options) {
-    var key = 'host=' + options.host + ',port=' + options.port + ',multicast=' + options.multicast;
-    var shared = pool[key] || (pool[key] = listen(options));
-    var that = common.createEmitter();
+const proxy = function (options) {
+    const key = 'host=' + options.host + ',port=' + options.port + ',multicast=' + options.multicast;
+    const shared = pool[key] || (pool[key] = listen(options));
+    //var that = common.createEmitter();
+    const that = new Repository();
 
     process.nextTick(function () {
-        var all = shared.all();
+        const all = shared.all();
 
         Object.keys(all).forEach(function (key) {
             all[key].forEach(function (val) {

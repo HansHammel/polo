@@ -1,9 +1,28 @@
-var common = require('common');
+//var common = require('common');
+const EventEmitter = require('events');
 var repository = require('./repository');
 
+class Polo extends EventEmitter {
+	constructor() {
+		super();
+    //this.uri = uri;
+    //this.all = {};
+  }
+}
+
+class Ups extends EventEmitter {
+	constructor() {
+		super();
+    //this.uri = uri;
+    //this.all = {};
+  }
+}
+
 var polo = function (options) {
-    var that = common.createEmitter();
-    var ups = common.createEmitter();
+	var that = new Polo();
+	var ups = new Ups();
+    //var that = common.createEmitter();
+    //var ups = common.createEmitter();
     var repo = repository(options || {});
 
     var next = function (name) {

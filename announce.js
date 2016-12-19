@@ -1,44 +1,44 @@
-var dgram = require('dgram');
-var os = require('os');
+const dgram = require('dgram');
+const os = require('os');
 
 //on win check:  netsh interface ip show joins
 //var MULTICAST_ADDRESS = '239.255.255.250'; //not working on windows
 //var MULTICAST_ADDRESS = '239.255.178.1'; //private multicast //not working on windows
 //var MULTICAST_ADDRESS = '224.1.1.1';  //not working on windows
 //var MULTICAST_ADDRESS = '224.0.0.234';
-var MULTICAST_ADDRESS = '224.0.0.1'; //working on windows !!!
+const MULTICAST_ADDRESS = '224.0.0.1'; //working on windows !!!
 //var MULTICAST_ADDRESS = '224.0.0.114'; //not working on windows
 //var MULTICAST_ADDRESS = '225.0.0.1'; //not working on windows
 
 //var MULTICAST_ADDRESS = '225.0.0.1';
-var MULTICAST_PORT = 60547;
+const MULTICAST_PORT = 60547;
 
 module.exports = function (me, options, callback) {
-    var server = dgram.createSocket({
+    const server = dgram.createSocket({
         type: 'udp4', reuseAddr: true, toString: function () {
             return 'udp4'
         }
     });
-    var env = process.env;
-    var hosts = {};
-    var found = 0;
-    var loopTimer;
+    const env = process.env;
+    let hosts = {};
+    let found = 0;
+    let loopTimer;
 
-    var port = options.port || MULTICAST_PORT;
-    var host = options.host || MULTICAST_ADDRESS;
-    var multicast = !(options.multicast === false || (options.multicast === undefined && process.env.NODE_ENV === 'development'));
+    const port = options.port || MULTICAST_PORT;
+    const host = options.host || MULTICAST_ADDRESS;
+    const multicast = !(options.multicast === false || (options.multicast === undefined && process.env.NODE_ENV === 'development'));
 
-    var clear = function () {
+    const clear = function () {
         hosts = {};
     };
-    var encode = function () {
+    const encode = function () {
         return 'ann;' + me + (Object.keys(hosts).length ? ';' + Object.keys(hosts).join(';') : '');
     };
-    var send = function (msg) {
+    const send = function (msg) {
         msg = new Buffer(msg);
         server.send(msg, 0, msg.length, port, host);
     };
-    var find = function () {
+    const find = function () {
         var then = found;
         var timeout = 10;
         var loop = function () {
@@ -59,9 +59,9 @@ module.exports = function (me, options, callback) {
     });
 
     server.on('message', function (message, rinfo) {
-        var parts = message.toString().split(';');
-        var type = parts[0];
-        var from = parts[1];
+        const parts = message.toString().split(';');
+        const type = parts[0];
+        const from = parts[1];
 
         if (parts.indexOf(me, 2) > -1) return;
         if (from === me) return;
@@ -80,7 +80,7 @@ module.exports = function (me, options, callback) {
     function bindToAllNics(server, host) {
         var ifaces = os.networkInterfaces();
         Object.keys(ifaces).forEach(function (ifname) {
-            var alias = 0;
+            let alias = 0;
             ifaces[ifname].forEach(function (iface) {
                 if ('IPv4' !== iface.family || iface.internal !== false) {
                     // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
@@ -123,7 +123,7 @@ module.exports = function (me, options, callback) {
 
     find();
 
-    var announcer = {};
+    let announcer = {};
     announcer.close = function () {
         if (server) {
             server.close();

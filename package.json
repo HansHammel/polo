@@ -3,12 +3,11 @@
   "author": "Mathias Buus Madsen <mathiasbuus@gmail.com>",
   "version": "0.8.1",
   "dependencies": {
-    "cli-table2": "^0.2.0",
-    "colors": "^1.1.2",
-    "common": "^0.2.5",
-    "request": "^2.79.0",
+    "cli-table2": ">=0.2.0",
+    "colors": ">=1.1.2",
+    "request": ">=2.79.0",
     "root": "git+https://github.com/HansHammel/root.git",
-    "uuid": "^3.0.1"
+    "uuid": ">=3.0.1"
   },
   "repository": "git://github.com/HansHammel/polo",
   "description": "a zero configuration discovery service written completely in Javascript",
@@ -23,7 +22,7 @@
     "mDNSResponder"
   ],
   "engines": [
-    "node >= 0.8.0"
+    "node >= 6.0.0"
   ],
   "scripts": {
     "test": "node tests/index.js",
