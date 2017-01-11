@@ -1,5 +1,14 @@
 # Polo
 
+[![Inline docs](http://inch-ci.org/github/HansHammel/polo.svg?branch=master)](http://inch-ci.org/github/HansHammel/polo)
+[![star this repo](http://githubbadges.com/star.svg?user=HansHammel&repo=polo&style=flat&color=fff&background=007ec6)](https://github.com/HansHammel/polo)
+[![fork this repo](http://githubbadges.com/fork.svg?user=HansHammel&repo=polo&style=flat&color=fff&background=007ec6)](https://github.com/HansHammel/polo/fork)
+[![david dependency](https://img.shields.io/david/HansHammel/polo.svg)](https://david-dm.org/HansHammel/polo)
+[![david devDependency](https://img.shields.io/david/dev/HansHammel/polo.svg)](https://david-dm.org/HansHammel/polo)
+[![david optionalDependency](https://img.shields.io/david/optional/HansHammel/polo.svg)](https://david-dm.org/HansHammel/polo)
+[![david peerDependency](https://img.shields.io/david/peer/HansHammel/polo.svg)](https://david-dm.org/HansHammel/polo)
+[![Known Vulnerabilities](https://snyk.io/test/github/HansHammel/polo/badge.svg)](https://snyk.io/test/github/HansHammel/polo)
+
 Polo is a zero configuration (zeroconf, mdns or dns-sd) service discovery module written completely in Javascript. Unlike some other tools (https://github.com/agnat/node_mdns) it does not require the installation of Apple's Bonjour SDK.
 It's available through npm:
 
