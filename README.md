@@ -1,5 +1,6 @@
 # Polo
 
+[![Build Status](https://secure.travis-ci.org/HansHammel/polo.png?branch=master)](http://travis-ci.org/HansHammel/polo)
 [![Inline docs](http://inch-ci.org/github/HansHammel/polo.svg?branch=master)](http://inch-ci.org/github/HansHammel/polo)
 [![star this repo](http://githubbadges.com/star.svg?user=HansHammel&repo=polo&style=flat&color=fff&background=007ec6)](https://github.com/HansHammel/polo)
 [![fork this repo](http://githubbadges.com/fork.svg?user=HansHammel&repo=polo&style=flat&color=fff&background=007ec6)](https://github.com/HansHammel/polo/fork)
