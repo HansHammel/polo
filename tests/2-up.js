@@ -26,4 +26,4 @@ exec('node ' + __dirname + '/fixtures/put-and-close.js', function (err) {
 
 setTimeout(function () {
     assert.ok(false, 'timeout');
-}, 1000);
+}, 3000);
