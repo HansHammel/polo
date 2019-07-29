@@ -19,7 +19,11 @@ os:
   - windows
   - linux
   - osx
- 
+
+matrix:
+  allow_failures:
+    - os: windows
+    
 env:
   - NODE_ENV=testing
 
